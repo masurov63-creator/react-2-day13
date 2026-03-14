@@ -66,7 +66,7 @@ const Layout = () => {
                         <h2 className="text-lg font-semibold text-white mb-4">Pages</h2>
                         <ul className="space-y-2">
                             <Link
-                                to="/home">
+                                to="/">
                                 <li className="hover:text-teal-400 cursor-pointer">Home</li>
                             </Link>
 
