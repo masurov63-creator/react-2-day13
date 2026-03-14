@@ -62,13 +62,13 @@ const Zustand = () => {
                             onChange={handleChange}
                             className='border-2 border-black rounded p-3'
                         />
-                        <button type='submit' className='w-[150px]  border ml-[25px] p-3 rounded text-white bg-green-400 hover:text-green-400 hover:bg-white transition-all '>Add</button>
+                        <button type='submit' className='w-37  border ml-6 p-3 rounded text-white bg-green-400 hover:text-green-400 hover:bg-white transition-all '>Add</button>
                     </form>
                 </div>
 
             </div>
 
-            <table className='w-[80%] m-auto mt-5 bg-white shadow-lg rounded-2xl  overflow-hidden text-center mb-[60px]'>
+            <table className='w-[80%] m-auto mt-5 bg-white shadow-lg rounded-2xl  overflow-hidden text-center mb-15'>
                 <thead className='bg-amber-800 h-10 text-white '>
                     <tr>
                         <th>Id</th>

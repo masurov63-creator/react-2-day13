@@ -63,7 +63,7 @@ const Reduxtoolkit = () => {
 
             <div >
 
-                <table className=" text-center  w-[100%] m-auto bg-amber-50 mt-[40px] rounded-2xl">
+                <table className=" text-center  w-full m-auto bg-amber-50 mt-10 rounded-2xl">
                     <thead>
                         <tr className=" border-b">
                             <th className="p-3">Id</th>

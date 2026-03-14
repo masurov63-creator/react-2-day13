@@ -7,11 +7,11 @@ const Home = () => {
   const [data] = useAtom(AtomData);
   const [, deletuser] = useAtom(Deletuser)
   return (
-    <div className='pt-25   w-[100%] m-auto h-[75vh]  overflow-y-auto'>
+    <div className='pt-25   w-full m-auto h-[75vh]  overflow-y-auto'>
 
 
 
-      <table className='mb-[20px] w-[80%] m-auto text-center bg-[#558eae] rounded-[8px] text-white'>
+      <table className='mb-5 w-[80%] m-auto text-center bg-[#558eae] rounded-lg text-white'>
         <thead>
           <tr className='border-b '>
             <th className='p-2'>ID</th>

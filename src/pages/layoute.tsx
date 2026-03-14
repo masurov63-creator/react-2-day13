@@ -3,8 +3,8 @@ import { Link, Outlet, } from 'react-router-dom'
 const Layoute = () => {
     return (
         <div >
-            <header className='p-2 w-[80%] m-auto shadow-lg z-10 bg-[#817a7a58] mt-[20px] px-[15px] rounded fixed ml-[150px]'>
-                <div className='flex gap-[50px]'>
+            <header className='p-2 w-[80%] m-auto shadow-lg z-10 bg-[#817a7a58] mt-5 px-3.73 rounded fixed ml-37'>
+                <div className='flex gap-12'>
 
                     <Link to='/'>
                         <p className='p-1 rounded hover:shadow-[0px_0px_8px_0px_#817a7a58]'>Home</p>
