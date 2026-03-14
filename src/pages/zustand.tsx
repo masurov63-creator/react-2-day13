@@ -28,6 +28,8 @@ const style = {
     borderRadius: "12px",
 };
 
+
+
 const Zustand = () => {
     const [open, setOpen] = useState(false);
     const [idx, setIdx] = useState(0);
@@ -42,7 +44,12 @@ const Zustand = () => {
             },
             onSubmit: (values) => {
                 if (idx) {
-                    editUser({ id: idx, ...values, status: false });
+                    editUser({
+                        id: idx,
+                        name: values.name,
+                        age: Number(values.age),
+                        status: false,
+                    });
                 } else {
                     addUser({
                         id: Date.now(),
@@ -58,7 +65,7 @@ const Zustand = () => {
             },
         });
 
-    const handleEdit = (e) => {
+    const handleEdit = (e: { name: string, age: number, id: number }) => {
         setIdx(e.id);
         setFieldValue("name", e.name);
         setFieldValue("age", e.age);
