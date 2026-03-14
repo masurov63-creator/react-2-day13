@@ -1,107 +1,164 @@
-import { useState } from 'react'
-import { useTodo } from '../stores/todo';
-import { useFormik } from 'formik';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import { useTodo } from "../stores/todo";
+import { useFormik } from "formik";
+import { Link } from "react-router-dom";
+
+import {
+    Button,
+    TextField,
+    Modal,
+    Box,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody,
+    Typography,
+} from "@mui/material";
+
+const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 4,
+    borderRadius: "12px",
+};
+
 const Zustand = () => {
-    const [idx, setIdx] = useState(0)
+    const [open, setOpen] = useState(false);
+    const [idx, setIdx] = useState(0);
 
-    const { data, deleteUser, addUser, editUser } = useTodo()
+    const { data, deleteUser, addUser, editUser } = useTodo();
 
-    const { handleSubmit, values, handleChange, resetForm, setFieldValue } = useFormik({
-        initialValues: {
-            name: "",
-            age: 0
-        },
-        onSubmit: (values) => {
-            if (idx) {
-                editUser({ id: idx, ...values, status: false })
-            }
-            else {
-                addUser({
-                    id: Date.now(),
-                    name: values.name,
-                    age: Number(values.age),
-                    status: false,
-                })
-            }
-            resetForm()
-            setIdx(0)
-        }
-    })
+    const { handleSubmit, values, handleChange, resetForm, setFieldValue } =
+        useFormik({
+            initialValues: {
+                name: "",
+                age: "",
+            },
+            onSubmit: (values) => {
+                if (idx) {
+                    editUser({ id: idx, ...values, status: false });
+                } else {
+                    addUser({
+                        id: Date.now(),
+                        name: values.name,
+                        age: Number(values.age),
+                        status: false,
+                    });
+                }
 
-    // function infoId(id) {
+                resetForm();
+                setIdx(0);
+                setOpen(false);
+            },
+        });
 
-    // }
+    const handleEdit = (e) => {
+        setIdx(e.id);
+        setFieldValue("name", e.name);
+        setFieldValue("age", e.age);
+        setOpen(true);
+    };
 
-
-    const handleEdit = (e: { id: number, name: string, age: number, status: boolean }) => {
-        setIdx(e.id)
-        setFieldValue("name", e.name)
-        setFieldValue("age", e.age)
-    }
+    const handleAdd = () => {
+        resetForm();
+        setIdx(0);
+        setOpen(true);
+    };
 
     return (
-        <>
+        <div className="w-[80%] m-auto pt-28">
+            <Button variant="contained" color="success" onClick={handleAdd}>
+                Add User
+            </Button>
 
-            <div  className='pt-25   w-[80%] m-auto   overflow-y-auto '>
-                <div>
+            {/* Modal */}
+            <Modal open={open} onClose={() => setOpen(false)}>
+                <Box sx={style}>
+                    <Typography variant="h6" mb={2}>
+                        {idx ? "Edit User" : "Add User"}
+                    </Typography>
+
                     <form onSubmit={handleSubmit}>
-                        <input
-                            type="text"
-                            placeholder='name'
-                            name='name'
+                        <TextField
+                            fullWidth
+                            label="Name"
+                            name="name"
                             value={values.name}
                             onChange={handleChange}
-                            className='border-2 border-black rounded p-3'
+                            sx={{ mb: 2 }}
                         />
-                        <input
+
+                        <TextField
+                            fullWidth
+                            label="Age"
                             type="number"
-                            placeholder='age'
-                            name='age'
+                            name="age"
                             value={values.age}
                             onChange={handleChange}
-                            className='border-2 border-black rounded p-3'
+                            sx={{ mb: 2 }}
                         />
-                        <button type='submit' className='w-37  border ml-6 p-3 rounded text-white bg-green-400 hover:text-green-400 hover:bg-white transition-all '>Add</button>
+
+                        <Button type="submit" variant="contained" fullWidth>
+                            {idx ? "Save" : "Add"}
+                        </Button>
                     </form>
-                </div>
+                </Box>
+            </Modal>
 
-            </div>
+            {/* Table */}
+            <Table sx={{ mt: 4, background: "white" }}>
+                <TableHead sx={{ background: "#ff9800" }}>
+                    <TableRow>
+                        <TableCell>ID</TableCell>
+                        <TableCell>Name</TableCell>
+                        <TableCell>Age</TableCell>
+                        <TableCell>Status</TableCell>
+                        <TableCell>Actions</TableCell>
+                    </TableRow>
+                </TableHead>
 
-            <table className='w-[80%] m-auto mt-5 bg-white shadow-lg rounded-2xl  overflow-hidden text-center mb-15'>
-                <thead className='bg-amber-800 h-10 text-white '>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-
-
-                <tbody className=' text-gray-500 text-[20px]'>
+                <TableBody>
                     {data.map((e) => (
-                        <tr key={e.id}>
-                            <td className='p-3'>{e.id}</td>
-                            <td>{e.name}</td>
-                            <td>{e.age}</td>
-                            <td className={`${e.status ? 'text-green-400' : 'text-red-400'}`}>{e.status ? "Activ" : "Inactiv"}</td>
-                            <td>
-                                <span onClick={() => { deleteUser(e.id) }} className='p-3 hover:text-red-500  font-bold'>Delet User</span>
-                                <span onClick={() => { handleEdit(e) }} className='p-3 hover:text-green-500  font-bold'>Edit User</span>
-                                <Link to={`/info/${e.id}`}>
+                        <TableRow key={e.id}>
+                            <TableCell>{e.id}</TableCell>
+                            <TableCell>{e.name}</TableCell>
+                            <TableCell>{e.age}</TableCell>
 
-                                    <p>info</p>
-                                </Link >
-                                {/* <Switch checked={e.status} onChange={() => checkUser(e.id)} {...label} defaultChecked /> */}
-                            </td>
-                        </tr>
+                            <TableCell sx={{ color: e.status ? "green" : "red" }}>
+                                {e.status ? "Active" : "Inactive"}
+                            </TableCell>
+
+                            <TableCell>
+                                <Button
+                                    color="error"
+                                    onClick={() => deleteUser(e.id)}
+                                    sx={{ mr: 1 }}
+                                >
+                                    Delete
+                                </Button>
+
+                                <Button
+                                    color="success"
+                                    onClick={() => handleEdit(e)}
+                                    sx={{ mr: 1 }}
+                                >
+                                    Edit
+                                </Button>
+
+                                <Link to={`/info/${e.id}`}>Info</Link>
+                            </TableCell>
+                        </TableRow>
                     ))}
-                </tbody>
-            </table>
-        </>
-    )
-}
+                </TableBody>
+            </Table>
+        </div>
+    );
+};
 
-export default Zustand
+export default Zustand;

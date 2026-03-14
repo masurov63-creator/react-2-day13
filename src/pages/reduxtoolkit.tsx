@@ -3,94 +3,105 @@ import { deletUser, addUser, editUser } from "../reduser/counter"
 import { useFormik } from "formik"
 import { useState } from "react"
 import type { RootState } from "../store/store"
+import {
+    TextField, Button, Table, TableBody, TableCell,
+    TableContainer, TableHead, TableRow, Paper, Container, Box, Stack,
+    Dialog, DialogTitle, DialogContent, DialogActions, Typography
+} from "@mui/material"
 
 const Reduxtoolkit = () => {
     const [idx, setIdx] = useState(0)
+    const [open, setOpen] = useState(false)
     const dispatch = useDispatch()
     const { data } = useSelector((state: RootState) => state.counter)
-    const { resetForm, handleSubmit, values, handleChange, setFieldValue } = useFormik({
-        initialValues: {
-            name: '',
-            age: 0,
-            status: false
-        },
 
+    const { resetForm, handleSubmit, values, handleChange, setFieldValue } = useFormik({
+        initialValues: { name: '', age: 0 },
         onSubmit: (value) => {
             if (!idx) {
-
-                dispatch(addUser(
-                    {
-                        id: Date.now(),
-                        name: value.name,
-                        age: value.age,
-                        status: false,
-                    }
-                ))
-                resetForm()
+                dispatch(addUser({ id: Date.now(), ...value, status: false }))
+            } else {
+                dispatch(editUser({ id: idx, ...value }))
             }
-
-            else {
-                dispatch(editUser(
-                    {
-                        name: value.name,
-                        age: value.age,
-                        id: idx
-                    }
-
-                ))
-                resetForm()
-                setIdx(0)
-            }
+            handleClose()
         }
     })
 
-
-    function hendlEdit(user: { name: string, age: number, id: number }) {
-        setFieldValue('name', user.name)
-        setFieldValue('age', user.age)
-        setIdx(user.id)
+    const handleOpen = (user?: { name: string, age: number, id: number }) => {
+        if (user) {
+            setFieldValue('name', user.name)
+            setFieldValue('age', user.age)
+            setIdx(user.id)
+        } else {
+            resetForm()
+            setIdx(0)
+        }
+        setOpen(true)
     }
 
+    const handleClose = () => {
+        setOpen(false)
+        resetForm()
+        setIdx(0)
+    }
 
     return (
-        <div className="pt-25 w-[80%] m-auto h-[75vh]  overflow-y-auto">
-            <form onSubmit={handleSubmit} className="border w-fit bg-[#a9e5d4] rounded text-white p-3">
-                <input type="text" name="name" value={values.name} onChange={handleChange} className="rounded border m-3 p-2" />
-                <input type="number" name="age" value={values.age} onChange={handleChange} className="rounded border m-3 p-2" />
-                <button type="submit">Save</button>
-            </form>
+        <div className="pt-25 pb-10">
 
+            <Container maxWidth="md" sx={{ mt: 5 }}>
+                <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+                    <Typography variant="h5">User List</Typography>
+                    <Button variant="contained" onClick={() => handleOpen()}>Add New User</Button>
+                </Stack>
 
-            <div >
+                {/* Dialog барои илова ва таҳрир */}
+                <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
+                    <DialogTitle>{idx ? "Edit User" : "Add New User"}</DialogTitle>
+                    <DialogContent>
+                        <Box component="form" id="user-form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+                            <TextField label="Name" name="name" value={values.name} onChange={handleChange} fullWidth />
+                            <TextField label="Age" name="age" type="number" value={values.age} onChange={handleChange} fullWidth />
+                        </Box>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button type="submit" form="user-form" variant="contained">{idx ? "Update" : "Add"}</Button>
+                    </DialogActions>
+                </Dialog>
 
-                <table className=" text-center  w-full m-auto bg-amber-50 mt-10 rounded-2xl">
-                    <thead>
-                        <tr className=" border-b">
-                            <th className="p-3">Id</th>
-                            <th>Name</th>
-                            <th>Age</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((e: { id: number, name: string, age: number, status: boolean }) => {
-                            return <tr key={e.id} className=" border-b">
-                                <td className="p-3">{e.id}</td>
-                                <td>{e.name}</td>
-                                <td>{e.age}</td>
-                                <td>{e.status ? 'true' : 'false'}</td>
-                                <td>
-                                    <span onClick={() => dispatch(deletUser(e.id))} className="hover:text-red-500 p-3" >Delet User</span>
-                                    <span onClick={() => hendlEdit(e)} className="hover:text-red-500 p-3" >Edit User</span>
-                                </td>
-                            </tr>
-                        })}
-                    </tbody>
-                </table>
-            </div>
-
+                {/* Ҷадвал */}
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Id</TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Age</TableCell>
+                                <TableCell>Status</TableCell>
+                                <TableCell>Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {data.map((e: any) => (
+                                <TableRow key={e.id}>
+                                    <TableCell>{e.id}</TableCell>
+                                    <TableCell>{e.name}</TableCell>
+                                    <TableCell>{e.age}</TableCell>
+                                    <TableCell>{e.status ? 'True' : 'False'}</TableCell>
+                                    <TableCell>
+                                        <Stack direction="row" spacing={1}>
+                                            <Button color="error" size="small" onClick={() => dispatch(deletUser(e.id))}>Delete</Button>
+                                            <Button size="small" onClick={() => handleOpen(e)}>Edit</Button>
+                                        </Stack>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Container>
         </div>
+
     )
 }
 
